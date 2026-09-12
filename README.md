@@ -1,5 +1,10 @@
 # Claude Public Skills
 
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![claude-code](https://img.shields.io/badge/claude--code-blueviolet)](https://github.com/topics/claude-code)
+[![skills](https://img.shields.io/badge/skills-blueviolet)](https://github.com/topics/skills)
+[![ai-agents](https://img.shields.io/badge/ai--agents-blueviolet)](https://github.com/topics/ai-agents)
+
 Shared [Claude Code](https://claude.com/claude-code) skills — packaged instructions Claude follows for a particular kind of task.
 
 ## Sharing strategy
