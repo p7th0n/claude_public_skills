@@ -45,20 +45,22 @@
     .doc-description-details > summary {
       list-style: none;
       cursor: pointer;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: #616161;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #424242;
       display: flex;
       align-items: center;
-      gap: 0.4rem;
-      margin-bottom: 0.4rem;
+      gap: 0.5rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid #E0E0E0;
+      margin-bottom: 0.75rem;
     }
 
     .doc-description-details > summary::-webkit-details-marker { display: none; }
 
     .doc-description-details > summary::before {
       content: "▶";
-      font-size: 0.65rem;
+      font-size: 0.75rem;
       color: #9E9E9E;
       transition: transform 0.15s ease;
       display: inline-block;
@@ -147,8 +149,9 @@
     /* Map table                                                             */
     /* ------------------------------------------------------------------ */
     .map-wrapper {
-      overflow-x: auto;
+      overflow: auto;
       margin-top: 1rem;
+      max-height: var(--map-max-height, 70vh);
     }
 
     table.story-map {
@@ -183,6 +186,9 @@
       padding: 0.5rem 0.75rem;
       text-align: center;
       letter-spacing: 0.03em;
+      position: sticky;
+      top: 0;
+      z-index: 15;
     }
 
     /* Task row */
@@ -195,6 +201,9 @@
       text-align: center;
       min-width: 140px;
       width: 160px;
+      position: sticky;
+      top: var(--task-sticky-top, 0px);
+      z-index: 15;
     }
 
     /* Release swimlane label */
@@ -212,6 +221,15 @@
       left: 0;
       z-index: 10;
     }
+
+    /* Corner cells — release-label column crossing the sticky header rows */
+    .corner-header {
+      position: sticky;
+      z-index: 20;
+    }
+
+    #corner-activity { top: 0; }
+    #corner-task { top: var(--task-sticky-top, 0px); }
 
     /* Story cell */
     .story-cell {
@@ -539,8 +557,11 @@
       /* reduce card font to fit more content */
       .story-card { font-size: 0.72rem; padding: 0.3rem 0.4rem; }
 
-      /* unwrap horizontal scroll */
-      .map-wrapper { overflow: visible; }
+      /* unwrap the scroll container so nothing is clipped on paper */
+      .map-wrapper { overflow: visible; max-height: none; }
+
+      /* sticky positioning doesn't belong on a printed page */
+      .activity-header, .task-header, .corner-header, .release-label { position: static; }
 
       /* details open, chevron hidden */
       details { display: block; }
@@ -631,9 +652,10 @@
   <div class="map-wrapper">
     <table class="story-map">
 
+      <thead>
       {# Activity row #}
-      <tr>
-        <td class="release-label"></td>
+      <tr class="activity-row">
+        <td class="release-label corner-header" id="corner-activity"></td>
         {% for activity in document.activities %}
         <th class="activity-header" colspan="{{ activity.tasks | length }}">
           {{ activity.name }}
@@ -642,15 +664,17 @@
       </tr>
 
       {# Task row #}
-      <tr>
-        <td class="release-label"></td>
+      <tr class="task-row">
+        <td class="release-label corner-header" id="corner-task"></td>
         {% for activity in document.activities %}
           {% for task in activity.tasks %}
           <th class="task-header {% if loop.last %}activity-last-task{% endif %}">{{ task.name }}</th>
           {% endfor %}
         {% endfor %}
       </tr>
+      </thead>
 
+      <tbody>
       {# Release swimlane rows #}
       {% for release in document.releases %}
       <tr class="release-row {% if loop.first %}current-release{% endif %}" data-release="{{ loop.index0 }}">
@@ -697,12 +721,32 @@
         {% endfor %}
       </tr>
       {% endfor %}
+      </tbody>
 
     </table>
   </div>
   {% endif %}
 
   <script>
+    function updateStickyOffsets() {
+      const header = document.querySelector('.doc-header');
+      const wrapper = document.querySelector('.map-wrapper');
+      const activityRow = document.querySelector('tr.activity-row');
+      const headerH = header ? header.getBoundingClientRect().height : 0;
+      const activityH = activityRow ? activityRow.getBoundingClientRect().height : 0;
+      document.documentElement.style.setProperty('--task-sticky-top', activityH + 'px');
+      if (wrapper) {
+        document.documentElement.style.setProperty('--map-max-height', 'calc(100vh - ' + (headerH + 32) + 'px)');
+      }
+    }
+
+    updateStickyOffsets();
+    window.addEventListener('load', updateStickyOffsets);
+    window.addEventListener('resize', updateStickyOffsets);
+    document.querySelectorAll('.doc-header details').forEach(d => {
+      d.addEventListener('toggle', updateStickyOffsets);
+    });
+
     function setZoom(level) {
       document.body.className = document.body.className.replace(/zoom-\d/, 'zoom-' + level);
       document.querySelectorAll('.zoom-btn').forEach(b => b.classList.remove('active'));
