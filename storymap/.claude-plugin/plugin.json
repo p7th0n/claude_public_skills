@@ -1,0 +1,12 @@
+{
+  "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
+  "name": "storymap",
+  "version": "0.2.0",
+  "description": "Jeff Patton-style user story mapping sessions for building shared understanding with stakeholders before writing a roadmap entry or spec proposal.",
+  "author": {
+    "name": "Dave Kurman"
+  },
+  "skills": [
+    "./"
+  ]
+}
