@@ -32,3 +32,13 @@ Repeat the `ln -s` for each skill you want. `git pull` picks up updates automati
 | --- | --- |
 | [`storymap`](storymap/SKILL.md) | Run a Jeff Patton-style user story mapping session to build shared understanding with stakeholders before writing a roadmap entry or spec proposal. |
 | [`prose-style`](prose-style/SKILL.md) | Apply when writing or editing prose meant for humans to read — READMEs, docs, comments, commit messages, PR descriptions, user-facing text. |
+
+### `storymap` requires the `storymap` CLI
+
+The `storymap` skill renders maps with the [`storymap`](https://github.com/mozaicworks/storymap) CLI by MozaicWorks (MIT) — install it separately:
+
+```
+pip install storymap
+```
+
+The skill bundles its own render template (`storymap/default.html.j2`) with a few extras (sticky map headers, click-to-toggle story descriptions) on top of the CLI's stock output. Drop `--template` from any `storymap render` command to get MozaicWorks' original template instead.

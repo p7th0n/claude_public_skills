@@ -15,6 +15,13 @@ shared understanding between whoever's building something and the people
 who'll use it, not a backlog. Never treat its output as decided behavior,
 and never produce code changes.
 
+Rendering depends on the `storymap` CLI from
+[MozaicWorks/storymap](https://github.com/mozaicworks/storymap) (MIT) — see
+the repo root README for install instructions. `default.html.j2` (bundled
+here) is this skill's own template, not MozaicWorks' stock one; drop
+`--template` from the render commands below to get their original output
+instead.
+
 ## Ground rules (Patton's method)
 
 Infer, don't ask the user to write for you:
